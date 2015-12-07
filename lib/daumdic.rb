@@ -7,10 +7,48 @@ def search(input)
   return if input.nil?
   return if (input = input.strip).empty?
 
-  tempfile = open(URI.escape("http://dic.daum.net/search.do?q=#{input}"))
+  doc = Nokogiri::HTML(open(URI.escape("http://dic.daum.net/search.do?q=#{input}")))
+  if doc.css('.search_result1').any?
+    # Exact match
 
-  Nokogiri::HTML(tempfile)
-    .css('#mArticle .clean_word ul.list_mean > li')
-    .map { |n| n.xpath("node()[not(@class='num_g1')]").text }
-    .join(', ')
+    language = doc
+      .css('.search_fst .tit_searchfd')
+      .text.strip
+    if /^(.*)어 사전$/.match language
+      language = $1
+    end
+
+    word = doc
+      .css('.search_fst .clean_word .tit_word > a:first')
+      .text.strip
+
+    meaning = doc
+      .css('.search_fst .clean_word ul.list_mean > li')
+      .map { |n| n.xpath("node()[not(@class='num_g1')]").text.strip }
+      .join(', ')
+
+    # Failed to parse daumdic
+    return if meaning.empty?
+
+    # Make a result message
+    result = ''
+    unless ['한국', '영', '일본', '한자 사전'].include? language
+      result += "(#{language})  "
+    end
+    if input != word
+      result += "#{word}  "
+    end
+    result += meaning
+  elsif doc.css('.speller_search').any?
+    # Not found, but there're some alternatives
+    alternatives = doc
+      .css('.speller_search > a')
+      .map(&:text)
+      .join(', ')
+
+    alternatives
+  else
+    # No idea
+    nil
+  end
 end
