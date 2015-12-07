@@ -2,27 +2,13 @@
 require 'uri'
 require 'nokogiri'
 require 'open-uri'
-
-# Lookup DaumDic
-def search(input)
-  return if input.nil?
-  return if (input = input.strip).empty?
-
-  tempfile = open(URI.escape("http://dic.daum.net/search.do?q=#{input}"))
-
-  Nokogiri::HTML(tempfile)
-    .css('#mArticle .clean_word ul.list_mean > li')
-    .map { |n| n.xpath("node()[not(@class='num_g1')]").text }
-    .join(', ')
-end
-
-
+require_relative 'lib/daumdic'
 
 # Handle ^C gracefully
 trap('SIGINT') { puts; exit 1 }
 
 # REPL
-puts '검색할 문구를 입력하세요!'
+puts 'Daum 사전'
 puts ''
 loop do
   print '> '
