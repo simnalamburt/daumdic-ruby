@@ -22,6 +22,11 @@ def search(input)
       .css('.search_fst .clean_word .tit_word > a:first')
       .text.strip
 
+    pronounce = doc
+      .css('.search_fst .clean_word span.pronounce_word')
+      .map { |n| n.text.strip }
+      .first
+
     meaning = doc
       .css('.search_fst .clean_word ul.list_mean > li')
       .map { |n| n.xpath("node()[not(@class='num_g1')]").text.strip }
@@ -34,6 +39,9 @@ def search(input)
     result = ''
     unless ['한국', '영', '일본', '한자 사전'].include? language
       result += "(#{language})  "
+    end
+    unless pronounce.nil?
+      result += "#{pronounce}  "
     end
     if input != word
       result += "#{word}  "
