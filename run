@@ -1,7 +1,4 @@
 #!/usr/bin/env ruby
-require 'uri'
-require 'nokogiri'
-require 'open-uri'
 require_relative 'lib/daumdic'
 
 # Handle ^C gracefully

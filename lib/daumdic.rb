@@ -1,3 +1,7 @@
+require 'uri'
+require 'nokogiri'
+require 'open-uri'
+
 # 다음사전에 단어를 검색한 후, 한줄짜리 결과를 출력한다.
 def search(input)
   return if input.nil?
