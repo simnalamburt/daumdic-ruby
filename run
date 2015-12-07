@@ -1,2 +1,24 @@
 #!/usr/bin/env ruby
-puts 'Hello, world!'
+
+# Handle ^C gracefully
+trap('SIGINT') { puts; exit 1 }
+
+# Handle EOF gracefully
+def gets
+  input = Kernel.gets
+  return input unless input.nil?
+
+  puts; exit
+end
+
+# Start REPL
+puts '검색할 문구를 입력하세요!'
+puts ''
+loop do
+  print "> "
+  input = gets.chomp
+  next if input.empty?
+
+  result = "http://dic.daum.net/search.do?q=#{input}&dic=eng"
+  puts result
+end
