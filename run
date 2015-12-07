@@ -6,7 +6,7 @@ trap('SIGINT') { puts; exit 1 }
 
 # REPL
 puts 'Daum 사전'
-puts ''
+puts
 loop do
   print '> '
   input = gets
