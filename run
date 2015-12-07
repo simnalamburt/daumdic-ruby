@@ -16,5 +16,5 @@ loop do
   if input[-1] != "\n" then puts; next end
 
   result = search(input)
-  puts result unless result.nil?
+  puts "\e[33m#{result}\e[0m" unless result.nil?
 end
