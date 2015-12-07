@@ -16,6 +16,7 @@ loop do
 
   # Handle ^D gracefully
   if input.nil? then puts; exit end
+  if input[-1] != "\n" then puts; next end
 
   result = search(input)
   puts result unless result.nil?
