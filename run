@@ -3,26 +3,10 @@ require 'uri'
 require 'nokogiri'
 require 'open-uri'
 
-# Handle ^C gracefully
-trap('SIGINT') { puts; exit 1 }
-
-# Handle EOF gracefully
-def gets(*args)
-  input = Kernel.gets(*args)
-  return input unless input.nil?
-  puts; exit
-end
-
-# Do nothing on `puts(nil)`
-def puts(*args)
-  return if args == [nil]
-  Kernel.puts(*args)
-end
-
 # Lookup DaumDic
-def search input
-  return nil if input.nil?
-  return nil if input.strip!.empty?
+def search(input)
+  return if input.nil?
+  return if (input = input.strip).empty?
 
   tempfile = open(URI.escape("http://dic.daum.net/search.do?q=#{input}"))
 
@@ -32,10 +16,21 @@ def search input
     .join(', ')
 end
 
-# Start REPL
+
+
+# Handle ^C gracefully
+trap('SIGINT') { puts; exit 1 }
+
+# REPL
 puts '검색할 문구를 입력하세요!'
 puts ''
 loop do
-  print "> "
-  puts(search(gets))
+  print '> '
+  input = gets
+
+  # Handle ^D gracefully
+  if input.nil? then puts; exit end
+
+  result = search(input)
+  puts result unless result.nil?
 end
