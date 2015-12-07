@@ -1,14 +1,35 @@
 #!/usr/bin/env ruby
+require 'uri'
+require 'nokogiri'
+require 'open-uri'
 
 # Handle ^C gracefully
 trap('SIGINT') { puts; exit 1 }
 
 # Handle EOF gracefully
-def gets
-  input = Kernel.gets
+def gets(*args)
+  input = Kernel.gets(*args)
   return input unless input.nil?
-
   puts; exit
+end
+
+# Do nothing on `puts(nil)`
+def puts(*args)
+  return if args == [nil]
+  Kernel.puts(*args)
+end
+
+# Lookup DaumDic
+def search input
+  return nil if input.nil?
+  return nil if input.strip!.empty?
+
+  tempfile = open(URI.escape("http://dic.daum.net/search.do?q=#{input}"))
+
+  Nokogiri::HTML(tempfile)
+    .css('#mArticle .clean_word ul.list_mean > li')
+    .map { |n| n.xpath("node()[not(@class='num_g1')]").text }
+    .join(', ')
 end
 
 # Start REPL
@@ -16,9 +37,5 @@ puts '검색할 문구를 입력하세요!'
 puts ''
 loop do
   print "> "
-  input = gets.chomp
-  next if input.empty?
-
-  result = "http://dic.daum.net/search.do?q=#{input}&dic=eng"
-  puts result
+  puts(search(gets))
 end
