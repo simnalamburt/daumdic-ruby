@@ -15,6 +15,6 @@ loop do
   if input.nil? then puts; exit end
   if input[-1] != "\n" then puts; next end
 
-  result = search(input)
+  result = Daumdic.search(input)
   puts "\e[33m#{result}\e[0m" unless result.nil?
 end
