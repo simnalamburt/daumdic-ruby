@@ -9,56 +9,35 @@ class Daumdic
     return if (input = input.strip).empty?
 
     doc = Nokogiri::HTML(open(URI.escape("http://dic.daum.net/search.do?q=#{input}")))
-    if doc.css('.search_result1').any?
-      # Exact match
 
-      language = doc
-        .css('.search_fst .tit_searchfd')
-        .text.strip
-      if /^(.*)어 사전$/.match language
-        language = $1
-      end
+    # Look for alternatives
+    rel = doc.css('.link_speller').map(&:text).join(', ')
+    return rel unless rel.empty?
 
-      word = doc
-        .css('.search_fst .clean_word .tit_word > a:first')
-        .text.strip
+    # Got some results
+    box = doc.css('.search_box')[0]
+    return if box.nil?
 
-      pronounce = doc
-        .css('.search_fst .clean_word span.pronounce_word')
-        .map { |n| n.text.strip }
-        .first
+    word = box.css('.txt_cleansch').text
+    meaning = box.css('.txt_search').map(&:text).join(', ')
+    pronounce = box.css('.txt_pronounce').first&.text
+    lang = box.parent.css('.tit_word').text
+    if /^(.*)어사전$/.match(lang); lang = $1 end
 
-      meaning = doc
-        .css('.search_fst .clean_word ul.list_mean > li')
-        .map { |n| n.xpath("node()[not(@class='num_g1')]").text.strip }
-        .join(', ')
+    # Failed to parse daumdic
+    return if meaning.empty?
 
-      # Failed to parse daumdic
-      return if meaning.empty?
-
-      # Make a result message
-      result = ''
-      unless ['한국', '영', '일본', '한자 사전'].include? language
-        result += "(#{language})  "
-      end
-      unless pronounce.nil?
-        result += "#{pronounce}  "
-      end
-      if input != word
-        result += "#{word}  "
-      end
-      result += meaning
-    elsif doc.css('.speller_search').any?
-      # Not found, but there're some alternatives
-      alternatives = doc
-        .css('.speller_search > a')
-        .map(&:text)
-        .join(', ')
-
-      alternatives
-    else
-      # No idea
-      nil
+    # Make a result message
+    result = ''
+    unless ['한국', '영', '일본', '한자사전'].include? lang
+      result += "(#{lang})  "
     end
+    if input != word
+      result += "#{word}  "
+    end
+    unless pronounce.nil?
+      result += "#{pronounce}  "
+    end
+    result += meaning
   end
 end
