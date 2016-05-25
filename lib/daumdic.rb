@@ -19,6 +19,7 @@ class Daumdic
     return if box.nil?
 
     word = box.css('.txt_cleansch').text
+    word = box.css('.txt_searchword')[0]&.text if word.empty?
     meaning = box.css('.txt_search').map(&:text).join(', ')
     pronounce = box.css('.txt_pronounce').first&.text
     lang = box.parent.css('.tit_word').text
