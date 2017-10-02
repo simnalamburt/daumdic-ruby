@@ -1,10 +1,20 @@
+# frozen_string_literal: true
+
+# Copyright 2015-2017 Hyeon Kim
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
 require 'uri'
 require 'nokogiri'
 require 'open-uri'
 
 class Daumdic
   # 다음사전에 단어를 검색한 후, 한줄짜리 결과를 출력한다.
-  def self.search(input)
+  def self.one_liner(input)
     return if input.nil?
     return if (input = input.strip).empty?
 

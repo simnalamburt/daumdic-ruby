@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 require_relative 'lib/daumdic'
 
 # Handle ^C gracefully
@@ -15,6 +16,6 @@ loop do
   if input.nil? then puts; exit end
   if input[-1] != "\n" then puts; next end
 
-  result = Daumdic.search(input)
+  result = Daumdic.one_liner(input)
   puts "\e[33m#{result}\e[0m" unless result.nil?
 end
