@@ -18,7 +18,8 @@ class Daumdic
     return if input.nil?
     return if (input = input.strip).empty?
 
-    doc = Nokogiri::HTML(open(URI.escape("http://dic.daum.net/search.do?q=#{input}")))
+    uri = "https://dic.daum.net/search.do?#{URI.encode_www_form(q: input)}"
+    doc = Nokogiri::HTML(URI.open(uri))
 
     # Look for alternatives
     rel = doc.css('.link_speller').map(&:text).join(', ')

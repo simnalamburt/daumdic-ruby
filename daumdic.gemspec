@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'daumdic'
-  s.version     = '1.0.0'
+  s.version     = '1.0.1'
   s.date        = '2017-10-02'
   s.licenses    = ['Apache-2.0', 'MIT']
   s.summary     = 'Daum Dictionary'
